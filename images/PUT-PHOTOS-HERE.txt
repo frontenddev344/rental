@@ -1,0 +1,11 @@
+Drop your photos in this folder using these exact names (JPG, ideally under 300 KB each):
+
+hero.jpg        wide landscape or portrait woman in a gown (1800 px wide)
+occasion-1.jpg  wedding guest   (portrait, 700 px wide)
+occasion-2.jpg  evening gala
+occasion-3.jpg  engagement
+occasion-4.jpg  graduation
+owners.jpg      closet or dress rack, or a woman in a dress (1100 px wide)
+dress-1.jpg ... dress-8.jpg   product cards (portrait, 3:4, 700 px wide)
+
+Keep this folder next to home.html. If a file is missing, the page falls back to the online photo.
