@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>List Your Dress | Maison Lumière</title>
+<meta name="description" content="Earn from dresses you rarely wear. We handle pickup, delivery and returns, and your details stay private.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500;600&family=Cairo:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/inner.css">
+<style>.co.own{grid-template-columns:minmax(0,1fr) 360px}@media(max-width:1050px){.co.own{grid-template-columns:1fr}}</style>
+</head>
+<body data-page="list">
+<div id="chrome-top"></div>
+<div class="phero"><div class="wrap">
+  <div class="crumbs"><a href="index.html" data-ar="الرئيسية">Home</a><span>/</span><span data-ar="اعرضي فستانك">List your dress</span></div>
+  <h1 data-ar="خزانتك تستطيع أن تربح">Your closet can earn</h1>
+  <p data-ar="اعرضي الفساتين التي نادراً ما ترتدينها. نتولى الاستلام والتوصيل والإرجاع، وبياناتك تبقى خاصة.">List dresses you rarely wear. We handle pickup, delivery and returns, and your details stay private.</p>
+</div></div>
+<main class="page"><div class="wrap" style="display:grid;gap:3.5rem">
+  <div class="cols3">
+    <div class="feat"><div class="ic">◈</div><h3 data-ar="تحكمي بالأسعار">You set the prices</h3><p data-ar="حددي سعر البيع وسعر الإيجار اليومي وأوقات التوفر.">Set the sale price, the daily rental price and when the dress is available.</p></div>
+    <div class="feat"><div class="ic">✦</div><h3 data-ar="اقبلي أو ارفضي">Accept or decline</h3><p data-ar="كل طلب يصلك مع رقمه وتواريخه ومدة التجهيز المطلوبة.">Every request arrives with its order number, dates and the preparation time needed.</p></div>
+    <div class="feat"><div class="ic">❖</div><h3 data-ar="لا حاجة للتعامل مع أحد">No dealing with customers</h3><p data-ar="لا ترين بيانات العميلة ولا ترى بياناتك. سائقنا يستلم من العنوان الذي تحددينه.">You never see the customer's details and they never see yours. Our driver collects from the address you confirm.</p></div>
+  </div>
+
+  <div class="co own">
+    <form id="f" class="panel stack" novalidate>
+      <h2 data-ar="تفاصيل الفستان">Dress details</h2>
+      <div class="form-grid">
+        <div class="fld full"><label for="title" data-ar="اسم الفستان">Dress name</label><input class="inp" id="title" placeholder="e.g. Midnight Satin Gown"></div>
+        <div class="fld"><label for="occ" data-ar="المناسبة">Occasion</label><select class="sel" id="occ"></select></div>
+        <div class="fld"><label for="color" data-ar="اللون">Color</label><select class="sel" id="color"></select></div>
+        <div class="fld full"><span class="lbl" data-ar="المقاسات المتوفرة">Sizes available</span><div class="chips" id="sizes"></div></div>
+        <div class="fld"><label for="rent" data-ar="سعر الإيجار لليوم (ر.س)">Rental price per day (SAR)</label><input class="inp" id="rent" inputmode="numeric" placeholder="200"></div>
+        <div class="fld"><label for="buy" data-ar="سعر البيع (ر.س) اختياري">Sale price (SAR), optional</label><input class="inp" id="buy" inputmode="numeric" placeholder="1500"></div>
+        <div class="fld full"><label for="desc" data-ar="الوصف">Description</label><textarea class="ta" id="desc" data-ar-ph="القماش، الحالة، مرات الارتداء" placeholder="Fabric, condition, number of times worn"></textarea></div>
+        <div class="fld full"><span class="lbl" data-ar="الصور والفيديو">Photos and video</span>
+          <label class="drop" for="files"><b data-ar="اضغطي لرفع الملفات">Click to upload files</b><br><span class="small" data-ar="صور واضحة من عدة زوايا، وفيديو قصير اختياري">Clear photos from several angles, short video optional</span></label>
+          <input type="file" id="files" accept="image/*,video/*" multiple hidden>
+          <div class="previews" id="prev"></div></div>
+        <div class="fld full"><label for="prep" data-ar="مدة التجهيز قبل الاستلام">Preparation time before pickup</label><select class="sel" id="prep"><option value="1">1 day</option><option value="2">2 days</option><option value="3">3 days</option></select></div>
+      </div>
+      <div class="note" data-ar="بعد الإرسال يراجع فريقنا الفستان قبل نشره. سنخبرك عند الموافقة.">After you submit, our team reviews the dress before it is published. We notify you once it is approved.</div>
+      <p class="err" id="err"></p>
+      <div class="row sp"><a class="btn btn-ghost" href="login.html#owner" data-ar="تسجيل الدخول كمالكة">Sign in as owner</a><button class="btn btn-gold" data-ar="أرسلي للمراجعة">Submit for review</button></div>
+    </form>
+    <aside class="panel co-sum">
+      <h3 data-ar="كيف تُنشر فساتينك">How your dress goes live</h3>
+      <ul class="tl" style="margin-top:.8rem"><li class="done" data-ar="تسجيل برقم الجوال">Register with mobile and OTP</li><li class="now" data-ar="رفع الفستان وتحديد الأسعار">Upload dress and set prices</li><li data-ar="مراجعة الإدارة">Admin approval</li><li data-ar="يظهر للعميلات">Visible to customers</li><li data-ar="طلب، قبول، استلام السائق">Request, accept, driver pickup</li></ul>
+      <hr class="hr"><p class="small muted" data-ar="تُطبّق عمولة للمنصة وتظهر لك بوضوح قبل تأكيد كل فستان.">A platform commission applies and is shown to you before each dress is confirmed.</p>
+    </aside>
+  </div>
+  <div class="panel done-box" id="done" hidden><div class="big">&#10003;</div><h2 data-ar="تم إرسال فستانك للمراجعة">Your dress was sent for review</h2><p class="muted" data-ar="سنخبرك بمجرد موافقة الإدارة.">We will let you know as soon as the admin approves it.</p><a class="btn btn-dark" href="owner.html" data-ar="إلى لوحة المالكة">Go to owner dashboard</a></div>
+</div></main>
+<div id="chrome-foot"></div>
+<script src="assets/app.js"></script>
+<script>
+(function(){
+  var sizes={};
+  function T(a,b){return getLang()==='ar'?b:a}
+  function fill(){
+    var o=document.getElementById('occ'),c=document.getElementById('color'),ov=o.value,cv=c.value;
+    o.innerHTML=Object.keys(OCC).map(function(k){return '<option value="'+k+'">'+tr(OCC[k])+'</option>'}).join('');
+    c.innerHTML=Object.keys(COLORS).map(function(k){return '<option value="'+k+'">'+tr(COLORS[k])+'</option>'}).join('');
+    if(ov)o.value=ov;if(cv)c.value=cv;
+    var sz=document.getElementById('sizes');
+    sz.innerHTML=['XS','S','M','L','XL'].map(function(s){return '<button type="button" class="chip'+(sizes[s]?' on':'')+'" data-s="'+s+'">'+s+'</button>'}).join('');
+    [].forEach.call(sz.children,function(b){b.onclick=function(){sizes[b.dataset.s]?delete sizes[b.dataset.s]:sizes[b.dataset.s]=1;fill()}});
+  }
+  document.getElementById('files').onchange=function(){
+    var p=document.getElementById('prev');p.innerHTML='';
+    [].slice.call(this.files).slice(0,8).forEach(function(f){
+      var d=document.createElement('div'),u=URL.createObjectURL(f);
+      d.innerHTML=f.type.indexOf('video')===0?'<video src="'+u+'" muted></video>':'<img src="'+u+'" alt="">';
+      p.appendChild(d);
+    });
+  };
+  document.getElementById('f').onsubmit=function(e){
+    e.preventDefault();var er=document.getElementById('err');er.textContent='';
+    if(document.getElementById('title').value.trim().length<3){er.textContent=T('Enter the dress name.','أدخلي اسم الفستان.');return}
+    if(!Object.keys(sizes).length){er.textContent=T('Choose at least one size.','اختاري مقاساً واحداً على الأقل.');return}
+    if(!(+document.getElementById('rent').value>0)&&!(+document.getElementById('buy').value>0)){er.textContent=T('Add a rental or sale price.','أضيفي سعر إيجار أو بيع.');return}
+    document.getElementById('f').hidden=true;document.querySelector('.co-sum').hidden=true;document.getElementById('done').hidden=false;window.scrollTo({top:0,behavior:'smooth'});
+  };
+  window.onLang=fill;fill();
+})();
+</script>
+</body>
+</html>

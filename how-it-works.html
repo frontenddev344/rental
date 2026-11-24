@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How It Works | Maison Lumière</title>
+<meta name="description" content="How renting, buying and listing dresses works, from request to pickup, delivery and return.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500;600&family=Cairo:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/inner.css">
+</head>
+<body data-page="how">
+<div id="chrome-top"></div>
+<div class="phero"><div class="wrap">
+  <div class="crumbs"><a href="index.html" data-ar="الرئيسية">Home</a><span>/</span><span data-ar="كيف نعمل">How it works</span></div>
+  <h1 data-ar="منصة واحدة، ونقطة تواصل واحدة">One platform, one point of contact</h1>
+  <p data-ar="نحن الوسيط الوحيد بين العميلة والمالكة. نتولى التواصل والطلبات والتوصيل والإرجاع.">We are the only go-between for customer and owner. We handle communication, orders, delivery and returns.</p>
+</div></div>
+
+<main class="page"><div class="wrap stack" style="display:grid;gap:4rem">
+
+  <div>
+    <div class="chips" style="margin-bottom:1.5rem" id="tabs"><button class="chip on" data-k="rent" data-ar="الإيجار">Renting</button><button class="chip" data-k="buy" data-ar="الشراء">Buying</button><button class="chip" data-k="own" data-ar="للمالكات">For owners</button></div>
+    <div class="steps" id="steps" style="--c:#16120F"></div>
+  </div>
+
+  <div>
+    <span class="eyebrow" data-ar="حالة الطلب">Order status</span>
+    <h2 data-ar="تتبعين كل خطوة">You can follow every step</h2>
+    <div class="chips" id="stat" style="gap:.6rem"></div>
+  </div>
+
+  <div class="cols2">
+    <div class="feat"><div class="ic">◈</div><h3 data-ar="خصوصية كاملة">Total privacy</h3><p data-ar="لا تتواصل العميلة والمالكة مباشرة أبداً. أرقام الهواتف والعناوين تبقى مخفية، ونمنع مشاركة بيانات التواصل داخل المنصة.">Customers and owners never talk directly. Phone numbers and addresses stay hidden, and sharing contact details inside the platform is blocked.</p></div>
+    <div class="feat"><div class="ic">❖</div><h3 data-ar="سائقونا">Our own drivers</h3><p data-ar="سائقونا يستلمون الفستان من المالكة، يوصلونه إليك، ثم يعيدونه بعد الإيجار. التوصيل يُثبت برمز تحقق.">Our drivers collect the dress from the owner, bring it to you, then return it after the rental. Delivery is confirmed with a one-time code.</p></div>
+  </div>
+
+  <div>
+    <span class="eyebrow" data-ar="رسوم التوصيل">Delivery fees</span>
+    <h2 data-ar="حسب منطقتك">Based on your zone</h2>
+    <div class="panel tablewrap"><table class="tbl"><thead><tr><th data-ar="المنطقة">Zone</th><th data-ar="الرسوم للرحلة">Fee per trip</th></tr></thead><tbody id="zones"></tbody></table></div>
+    <p class="muted small" style="margin-top:.6rem" data-ar="أرقام تجريبية. الإدارة تحدد الرسوم النهائية لكل منطقة.">Sample figures. The platform sets the final fee for each zone.</p>
+  </div>
+
+  <div id="faq">
+    <span class="eyebrow" data-ar="أسئلة شائعة">Questions</span>
+    <h2 data-ar="الأسئلة الشائعة">Frequently asked</h2>
+    <div id="faqs"></div>
+  </div>
+
+  <div class="panel" style="text-align:center;padding:2.5rem"><h2 data-ar="جاهزة لاختيار فستانك؟">Ready to find your dress?</h2><div class="row" style="justify-content:center"><a class="btn btn-dark" href="shop.html" data-ar="تصفحي الفساتين">Browse dresses</a><a class="btn btn-ghost" href="list-your-dress.html" data-ar="اعرضي فستانك">List your dress</a></div></div>
+</div></main>
+<div id="chrome-foot"></div>
+<script src="assets/app.js"></script>
+<style>.steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1.4rem}.steps .step{border-top:1px solid var(--gold);padding-top:1.2rem}.steps .step .n{font-family:var(--serif);font-size:2.6rem;color:var(--gold-d);line-height:1}.steps h3{font-size:1.45rem;margin:.5rem 0 .3rem}.steps p{color:var(--muted);font-size:.92rem}@media(max-width:860px){.steps{grid-template-columns:1fr 1fr}}@media(max-width:560px){.steps{grid-template-columns:1fr}}</style>
+<script>
+(function(){
+  var k='rent';
+  function T(a,b){return getLang()==='ar'?b:a}
+  var FLOWS={
+    rent:[[T('Choose','اختاري'),T('Pick a dress, your size and rental dates. Booked dates are blocked, so double booking is impossible.','اختاري الفستان والمقاس وتواريخ الإيجار. التواريخ المحجوزة مغلقة فلا يحدث حجز مزدوج.')],
+          [T('Request','اطلبي'),T('Add your delivery date, time and location. Your request reaches our team and the owner instantly.','أضيفي تاريخ التوصيل ووقته وموقعك. يصل طلبك فوراً إلى فريقنا والمالكة.')],
+          [T('Delivered','التوصيل'),T('The owner accepts, our driver collects the dress and brings it to you. Confirm with your one-time code.','تقبل المالكة، يستلم سائقنا الفستان ويوصله إليك. أكّدي الاستلام برمز التحقق.')],
+          [T('Return','الإرجاع'),T('After your event we collect it from you and return it to the owner. The order closes once it is back.','بعد مناسبتك نستلمه منك ونعيده إلى المالكة. يُغلق الطلب بعد وصوله.')]],
+    buy:[[T('Choose','اختاري'),T('Browse dresses for sale and pick your size.','تصفحي الفساتين المعروضة للبيع واختاري مقاسك.')],
+         [T('Request','اطلبي'),T('Send your request with delivery details. The owner confirms availability.','أرسلي طلبك مع تفاصيل التوصيل. تؤكد المالكة التوفر.')],
+         [T('Pay','ادفعي'),T('Pay securely once the owner accepts.','ادفعي بأمان بعد موافقة المالكة.')],
+         [T('Delivered','التوصيل'),T('Our driver collects and delivers. Nothing to ship, nothing to return.','يستلم سائقنا ويوصل. لا شحن ولا إرجاع.')]],
+    own:[[T('Register','سجّلي'),T('Sign up with your mobile number and a one-time code.','سجّلي برقم جوالك ورمز تحقق.')],
+         [T('List','اعرضي'),T('Upload photos, set sale and rental prices and your availability.','ارفعي الصور وحددي أسعار البيع والإيجار وأوقات التوفر.')],
+         [T('Approval','الموافقة'),T('Our team reviews each dress before it goes live.','يراجع فريقنا كل فستان قبل نشره.')],
+         [T('Earn','اربحي'),T('Accept requests, confirm pickup time and place for our driver, and get paid.','اقبلي الطلبات وأكدي وقت ومكان الاستلام للسائق واستلمي أرباحك.')]]
+  };
+  var FAQ=[
+    [T('Can I speak to the owner?','هل أستطيع التحدث مع المالكة؟'),T('No. For everyone\'s privacy all communication goes through our team on WhatsApp or the website.','لا. حفاظاً على خصوصية الجميع يتم كل التواصل عبر فريقنا على واتساب أو الموقع.')],
+    [T('What if the owner rejects my request?','ماذا لو رفضت المالكة طلبي؟'),T('You are notified straight away and nothing is charged. We can suggest similar dresses.','يصلك إشعار فوراً ولا يُخصم شيء. يمكننا اقتراح فساتين مشابهة.')],
+    [T('What if my rental is late or the dress is damaged?','ماذا لو تأخر الإرجاع أو تضرر الفستان؟'),T('Our team records late returns and damage and handles it according to the rental terms.','يسجل فريقنا التأخير والأضرار ويتعامل معها وفق شروط الإيجار.')],
+    [T('How do I know delivery is complete?','كيف أعرف أن التوصيل تم؟'),T('You share a one-time code with the driver. The order moves to Delivered only after that.','تشاركين رمزاً مؤقتاً مع السائق. ينتقل الطلب إلى تم التوصيل بعد ذلك فقط.')],
+    [T('Which languages are supported?','ما اللغات المدعومة؟'),T('Arabic and English, switchable from the top of every page.','العربية والإنجليزية ويمكن التبديل من أعلى كل صفحة.')]
+  ];
+  function render(){
+    document.getElementById('steps').innerHTML=FLOWS[k].map(function(s,i){return '<div class="step"><div class="n">0'+(i+1)+'</div><h3>'+s[0]+'</h3><p>'+s[1]+'</p></div>'}).join('');
+    [].forEach.call(document.querySelectorAll('#tabs .chip'),function(b){b.classList.toggle('on',b.dataset.k===k);b.onclick=function(){k=b.dataset.k;render()}});
+    document.getElementById('stat').innerHTML=Object.keys(STATUS).map(function(x){return pill(x)}).join('');
+    document.getElementById('zones').innerHTML=ZONES.map(function(z){return '<tr><td>'+tr(z)+'</td><td>'+money(z.fee)+'</td></tr>'}).join('');
+    document.getElementById('faqs').innerHTML=FAQ.map(function(f,i){return '<details class="acc"'+(i===0?' open':'')+'><summary>'+f[0]+'</summary><p>'+f[1]+'</p></details>'}).join('');
+  }
+  window.onLang=render;render();
+})();
+</script>
+</body>
+</html>

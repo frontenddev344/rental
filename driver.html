@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Driver App | Maison Lumière</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500;600&family=Cairo:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/inner.css">
+</head>
+<body data-page="driver">
+<div id="chrome-top"></div>
+<div class="phero" style="padding:2rem 0"><div class="wrap"><span class="eyebrow" data-ar="تطبيق السائق">Driver app</span><h1 style="font-size:2.4rem;margin:.3rem 0">Faisal</h1><p id="today"></p></div></div>
+<main class="page" style="padding-top:2rem"><div class="wrap" style="max-width:720px">
+  <div class="stats" style="grid-template-columns:repeat(3,1fr)"><div class="stat"><b id="n1">0</b><span data-ar="مهام اليوم">Today's jobs</span></div><div class="stat"><b id="n2">0</b><span data-ar="قيد التنفيذ">In progress</span></div><div class="stat"><b id="n3">0</b><span data-ar="مكتملة">Completed</span></div></div>
+  <div id="jobs"></div>
+</div></main>
+<div id="chrome-foot"></div>
+<script src="assets/app.js"></script>
+<script>
+(function(){
+  function T(a,b){return getLang()==='ar'?b:a}
+  var JOBS=[
+    {id:1,order:'LM-20418',dress:2,type:{en:'Collect from owner',ar:'استلام من المالكة'},at:'10:30',addr:{en:'Villa 14, Garden District (Zone 1)',ar:'فيلا 14، حي الحدائق (المنطقة 1)'},steps:['pending','picked'],i:0},
+    {id:2,order:'LM-20418',dress:2,type:{en:'Deliver to customer',ar:'توصيل إلى العميلة'},at:'12:00',addr:{en:'Tower B, apt 305, Business District (Zone 1)',ar:'برج ب، شقة 305، حي الأعمال (المنطقة 1)'},steps:['picked','way','delivered'],i:0,otp:'4821'},
+    {id:3,order:'LM-19877',dress:6,type:{en:'Collect return from customer',ar:'استلام الإرجاع من العميلة'},at:'15:00',addr:{en:'Residence 7, Palm Heights (Zone 2)',ar:'سكن 7، بالم هايتس (المنطقة 2)'},steps:['retsched','picked'],i:0},
+    {id:4,order:'LM-19877',dress:6,type:{en:'Return to owner',ar:'إعادة إلى المالكة'},at:'17:00',addr:{en:'Villa 9, Rose Garden (Zone 2)',ar:'فيلا 9، روز جاردن (المنطقة 2)'},steps:['picked','returned'],i:0}
+  ];
+  function done(j){return j.i>=j.steps.length-1}
+  function render(){
+    document.getElementById('today').textContent=new Date().toLocaleDateString(getLang()==='ar'?'ar-SA-u-nu-latn':'en-GB',{weekday:'long',day:'numeric',month:'long'});
+    document.getElementById('n1').textContent=JOBS.length;
+    document.getElementById('n3').textContent=JOBS.filter(done).length;
+    document.getElementById('n2').textContent=JOBS.filter(function(j){return j.i>0&&!done(j)}).length;
+    document.getElementById('jobs').innerHTML=JOBS.map(function(j){
+      var d=dressById(j.dress),cur=j.steps[j.i],nxt=j.steps[j.i+1],fin=done(j);
+      var needOtp=nxt==='delivered';
+      return '<div class="job"><div class="row sp"><span class="small muted">'+j.order+' &middot; '+j.at+'</span>'+pill(cur)+'</div><h3 style="margin-top:.3rem">'+tr(j.type)+'</h3><div class="small muted">'+tr(d)+'</div>'+
+        '<div class="addr">'+tr(j.addr)+'</div>'+
+        (fin?'<span class="pill ok">'+T('Completed','مكتملة')+'</span>':
+          (needOtp?'<div class="fld" style="margin-bottom:.8rem"><label for="otp'+j.id+'">'+T('Customer code (proof of delivery)','رمز العميلة (إثبات التوصيل)')+'</label><input class="inp" id="otp'+j.id+'" inputmode="numeric" maxlength="4" placeholder="0000" style="direction:ltr;letter-spacing:.4em;text-align:center"></div>':'')+
+          '<div class="row"><button class="btn btn-dark sm" data-go="'+j.id+'" style="flex:1">'+T('Mark as','تحديث إلى')+': '+tr(STATUS[nxt])+'</button><a class="btn btn-ghost sm" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(j.addr.en)+'">'+T('Open map','الخريطة')+'</a></div><p class="err" id="er'+j.id+'"></p>')+'</div>';
+    }).join('');
+    [].forEach.call(document.querySelectorAll('[data-go]'),function(b){b.onclick=function(){
+      var j=JOBS.filter(function(x){return x.id===+b.dataset.go})[0],nxt=j.steps[j.i+1];
+      if(nxt==='delivered'&&document.getElementById('otp'+j.id).value!==j.otp){document.getElementById('er'+j.id).textContent=T('Wrong code. Ask the customer for the 4 digit code (demo: 4821).','الرمز غير صحيح. اطلبي الرمز المكون من 4 أرقام من العميلة (تجريبي: 4821).');return}
+      j.i++;render();toast(T('Status updated. The customer was notified.','تم تحديث الحالة. تم إشعار العميلة.'));
+    }});
+  }
+  window.onLang=render;render();
+})();
+</script>
+</body>
+</html>

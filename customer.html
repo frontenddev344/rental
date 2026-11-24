@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My Account | Maison Lumière</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500;600&family=Cairo:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/inner.css">
+</head>
+<body data-page="account">
+<div id="chrome-top"></div>
+<div class="dash">
+  <nav class="side" aria-label="Account">
+    <div class="who">Sara<small data-ar="عميلة">Customer</small></div>
+    <button data-tab="orders" data-ar="طلباتي">My orders</button>
+    <button data-tab="saved" data-ar="المحفوظات">Saved dresses</button>
+    <button data-tab="addr" data-ar="عناوين التوصيل">Delivery addresses</button>
+    <button data-tab="help" data-ar="الدعم">Support</button>
+  </nav>
+  <div class="main">
+    <section data-pane="orders">
+      <h1 data-ar="طلباتي">My orders</h1>
+      <div class="stats"><div class="stat"><b id="s1">0</b><span data-ar="طلبات جارية">Active orders</span></div><div class="stat"><b id="s2">0</b><span data-ar="طلبات سابقة">Past orders</span></div><div class="stat"><b id="s3">0</b><span data-ar="محفوظة">Saved</span></div><div class="stat"><b>1</b><span data-ar="إرجاع قادم">Upcoming return</span></div></div>
+      <div id="orders"></div>
+      <div class="row" style="margin-top:1rem"><a class="btn btn-dark" href="shop.html" data-ar="تصفحي الفساتين">Browse dresses</a></div>
+    </section>
+    <section data-pane="saved" hidden><h1 data-ar="المحفوظات">Saved dresses</h1><div class="grid" id="saved" style="grid-template-columns:repeat(3,minmax(0,1fr))"></div></section>
+    <section data-pane="addr" hidden><h1 data-ar="عناوين التوصيل">Delivery addresses</h1>
+      <div class="panel stack" style="max-width:560px">
+        <div class="note wine" data-ar="عناوينك مرئية لفريقنا والسائق المكلّف فقط، ولا تظهر للمالكات.">Your addresses are visible only to our team and the assigned driver. Owners never see them.</div>
+        <div class="ocard" style="grid-template-columns:1fr auto"><div><b data-ar="المنزل">Home</b><div class="meta" data-ar="المنطقة 1، وسط المدينة">Zone 1, city centre</div></div><button class="btn btn-ghost sm" data-ar="تعديل">Edit</button></div>
+        <div class="fld"><label for="na" data-ar="إضافة عنوان">Add an address</label><input class="inp" id="na"></div>
+        <button class="btn btn-dark" id="addaddr" data-ar="حفظ العنوان">Save address</button>
+      </div></section>
+    <section data-pane="help" hidden><h1 data-ar="الدعم">Support</h1>
+      <div class="cols2"><div class="feat"><div class="ic">✆</div><h3>WhatsApp</h3><p data-ar="راسلي فريقنا مباشرة بخصوص أي طلب.">Message our team directly about any order.</p><a class="btn btn-dark sm" href="contact.html" data-ar="تواصلي معنا">Contact us</a></div>
+      <div class="feat"><div class="ic">◈</div><h3 data-ar="لا تواصل مع المالكات">No direct contact with owners</h3><p data-ar="لحماية خصوصيتك وخصوصيتهن، نتولى نحن كل التنسيق.">To protect your privacy and theirs, we handle all coordination.</p></div></div></section>
+  </div>
+</div>
+<div id="chrome-foot"></div>
+<script src="assets/app.js"></script>
+<script>
+(function(){
+  var KEYS=['requested','confirmed','pending','picked','way','delivered','retsched','returned'];
+  function T(a,b){return getLang()==='ar'?b:a}
+  function orders(){
+    var mine=(store.get('lm_orders')||[]).concat([{no:'LM-20418',dress:2,mode:'rent',stage:4,demo:1},{no:'LM-19877',dress:6,mode:'rent',stage:7,demo:1}]);
+    return mine;
+  }
+  function render(){
+    var os=orders(),act=os.filter(function(o){return o.stage<(o.mode==='rent'?7:5)}),past=os.filter(function(o){return act.indexOf(o)<0});
+    document.getElementById('s1').textContent=act.length;document.getElementById('s2').textContent=past.length;
+    var saved=DRESSES.slice(2,5);document.getElementById('s3').textContent=saved.length;
+    function row(o){var d=dressById(o.dress);return '<div class="ocard">'+dressImg(d,200)+'<div><h3>'+tr(d)+'</h3><div class="meta">'+o.no+' &middot; '+(o.mode==='rent'?T('Rental','إيجار'):T('Purchase','شراء'))+'</div><div style="margin-top:.4rem">'+pill(KEYS[o.stage])+'</div></div><a class="btn btn-ghost sm" href="track.html?order='+o.no+'">'+T('Track','تتبّع')+'</a></div>'}
+    document.getElementById('orders').innerHTML='<h3 style="font-size:1.5rem;margin-bottom:.8rem">'+T('Active','الجارية')+'</h3>'+(act.map(row).join('')||'<div class="empty">'+T('No active orders.','لا توجد طلبات جارية.')+'</div>')+(past.length?'<h3 style="font-size:1.5rem;margin:1.6rem 0 .8rem">'+T('Past','السابقة')+'</h3>'+past.map(row).join(''):'');
+    document.getElementById('saved').innerHTML=saved.map(card).join('');
+  }
+  document.getElementById('addaddr').onclick=function(){var v=document.getElementById('na');if(v.value.trim().length<4){toast(T('Enter an address.','أدخلي العنوان.'));return}v.value='';toast(T('Address saved.','تم حفظ العنوان.'))};
+  initTabs();window.onLang=render;render();
+})();
+</script>
+<style>@media(max-width:1050px){#saved{grid-template-columns:repeat(2,minmax(0,1fr))!important}}</style>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Owner Dashboard | Maison Lumière</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500;600&family=Cairo:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/inner.css">
+</head>
+<body data-page="owner">
+<div id="chrome-top"></div>
+<div class="dash">
+  <nav class="side" aria-label="Owner">
+    <div class="who">Noor<small data-ar="مالكة فساتين">Dress owner</small></div>
+    <button data-tab="req" data-ar="الطلبات">Requests <em id="badge">0</em></button>
+    <button data-tab="dresses" data-ar="فساتيني">My dresses</button>
+    <button data-tab="avail" data-ar="التوفر">Availability</button>
+    <button data-tab="earn" data-ar="الأرباح">Earnings</button>
+  </nav>
+  <div class="main">
+    <section data-pane="req">
+      <h1 data-ar="طلبات جديدة">New requests</h1>
+      <div class="note wine" style="margin-bottom:1rem" data-ar="بيانات العميلة وعنوانها مخفية. فريق المنصة ينسّق معها.">The customer's details and address are hidden. Our team coordinates with them.</div>
+      <div id="reqs"></div>
+    </section>
+    <section data-pane="dresses" hidden>
+      <div class="row sp"><h1 data-ar="فساتيني">My dresses</h1><a class="btn btn-dark sm" href="list-your-dress.html" data-ar="إضافة فستان">Add a dress</a></div>
+      <div class="panel tablewrap"><table class="tbl"><thead><tr><th data-ar="الفستان">Dress</th><th data-ar="الإيجار / اليوم">Rent / day</th><th data-ar="البيع">Sale</th><th data-ar="الحالة">Status</th><th data-ar="متاح">Available</th></tr></thead><tbody id="mine"></tbody></table></div>
+    </section>
+    <section data-pane="avail" hidden>
+      <h1 data-ar="إدارة التوفر">Manage availability</h1>
+      <div class="panel stack" style="max-width:560px">
+        <p class="muted small" data-ar="أغلقي التواريخ التي لن يكون فيها الفستان متاحاً.">Block dates when a dress is not available.</p>
+        <div class="form-grid"><div class="fld"><label for="bd" data-ar="التاريخ">Date</label><input class="inp" type="date" id="bd"></div><div class="fld"><label for="bs" data-ar="الفستان">Dress</label><select class="sel" id="bs"></select></div></div>
+        <button class="btn btn-dark" id="block" data-ar="إغلاق التاريخ">Block date</button>
+        <div class="chips" id="blocked"></div>
+      </div>
+    </section>
+    <section data-pane="earn" hidden>
+      <h1 data-ar="الأرباح">Earnings</h1>
+      <div class="stats"><div class="stat"><b id="e1"></b><span data-ar="هذا الشهر">This month</span></div><div class="stat"><b id="e2"></b><span data-ar="بانتظار الدفع">Pending payout</span></div><div class="stat"><b>6</b><span data-ar="طلبات مكتملة">Completed orders</span></div><div class="stat"><b>4.9</b><span data-ar="التقييم">Rating</span></div></div>
+      <p class="muted small" data-ar="أرقام تجريبية. الأرباح تظهر بعد خصم عمولة المنصة.">Sample figures. Earnings are shown after the platform commission.</p>
+    </section>
+  </div>
+</div>
+<div id="chrome-foot"></div>
+<script src="assets/app.js"></script>
+<script>
+(function(){
+  function T(a,b){return getLang()==='ar'?b:a}
+  var REQ=[
+    {no:'LM-20431',dress:1,dates:'28 Nov to 30 Nov',prep:2,state:'new'},
+    {no:'LM-20427',dress:4,dates:'02 Dec to 04 Dec',prep:1,state:'new'},
+    {no:'LM-20390',dress:6,dates:'Purchase',prep:2,state:'accepted'}
+  ];
+  var mine=[{d:1,s:'live',on:true},{d:4,s:'live',on:true},{d:6,s:'live',on:false},{d:8,s:'pending',on:false}];
+  var blocked=store.get('lm_blocked')||[];
+  function render(){
+    var n=REQ.filter(function(r){return r.state==='new'}).length;document.getElementById('badge').textContent=n;
+    document.getElementById('reqs').innerHTML=REQ.map(function(r,i){
+      var d=dressById(r.dress),box='';
+      if(r.state==='new')box='<div class="row"><button class="btn btn-dark sm" data-a="'+i+'">'+T('Accept','قبول')+'</button><button class="btn btn-danger sm" data-r="'+i+'">'+T('Reject','رفض')+'</button></div>';
+      if(r.state==='accepting')box='<div class="panel stack" style="background:var(--sand);border:0"><b>'+T('Confirm driver pickup','أكدي استلام السائق')+'</b><div class="form-grid"><div class="fld"><label>'+T('Pickup date','تاريخ الاستلام')+'</label><input class="inp" type="date" id="pd'+i+'"></div><div class="fld"><label>'+T('Pickup time','وقت الاستلام')+'</label><input class="inp" type="time" id="pt'+i+'" value="11:00"></div><div class="fld full"><label>'+T('Pickup location','موقع الاستلام')+'</label><select class="sel" id="pl'+i+'"><option>'+T('Home (saved address)','المنزل (العنوان المحفوظ)')+'</option><option>'+T('Studio','الاستوديو')+'</option></select></div></div><div class="row"><button class="btn btn-dark sm" data-c="'+i+'">'+T('Confirm pickup','تأكيد الاستلام')+'</button><button class="btn btn-ghost sm" data-x="'+i+'">'+T('Cancel','إلغاء')+'</button></div></div>';
+      if(r.state==='accepted')box='<span class="pill ok">'+T('Accepted, pickup confirmed','تم القبول وتأكيد الاستلام')+'</span>';
+      if(r.state==='rejected')box='<span class="pill bad">'+T('Rejected','مرفوض')+'</span>';
+      return '<div class="ocard" style="grid-template-columns:72px minmax(0,1fr)">'+dressImg(d,200)+'<div><h3>'+tr(d)+'</h3><div class="meta">'+r.no+' &middot; '+r.dates+' &middot; '+T('Preparation','التجهيز')+': '+r.prep+' '+T('day(s)','يوم')+'</div><div class="meta">'+T('Customer','العميلة')+': <b>'+T('Hidden by platform','مخفية بواسطة المنصة')+'</b></div><div style="margin-top:.7rem">'+box+'</div></div></div>';
+    }).join('');
+    document.getElementById('mine').innerHTML=mine.map(function(m,i){var d=dressById(m.d);return '<tr><td><b>'+tr(d)+'</b></td><td>'+money(d.rent)+'</td><td>'+money(d.buy)+'</td><td>'+(m.s==='live'?'<span class="pill ok">'+T('Live','منشور')+'</span>':'<span class="pill warn">'+T('Pending approval','بانتظار الموافقة')+'</span>')+'</td><td><button class="chip'+(m.on?' on':'')+'" data-t="'+i+'" '+(m.s!=='live'?'disabled':'')+'>'+(m.on?T('On','نعم'):T('Off','لا'))+'</button></td></tr>'}).join('');
+    var bs=document.getElementById('bs'),v=bs.value;bs.innerHTML=mine.filter(function(m){return m.s==='live'}).map(function(m){return '<option value="'+m.d+'">'+tr(dressById(m.d))+'</option>'}).join('');if(v)bs.value=v;
+    document.getElementById('blocked').innerHTML=blocked.map(function(b,i){return '<button class="chip on" data-u="'+i+'">'+tr(dressById(b.d))+' &middot; '+b.date+' &times;</button>'}).join('');
+    document.getElementById('e1').textContent=money(3120);document.getElementById('e2').textContent=money(840);
+    bind();
+  }
+  function bind(){
+    [].forEach.call(document.querySelectorAll('[data-a]'),function(b){b.onclick=function(){REQ[b.dataset.a].state='accepting';render()}});
+    [].forEach.call(document.querySelectorAll('[data-r]'),function(b){b.onclick=function(){REQ[b.dataset.r].state='rejected';render();toast(T('Request rejected. The customer is notified by our team.','تم رفض الطلب. سيُبلغ فريقنا العميلة.'))}});
+    [].forEach.call(document.querySelectorAll('[data-x]'),function(b){b.onclick=function(){REQ[b.dataset.x].state='new';render()}});
+    [].forEach.call(document.querySelectorAll('[data-c]'),function(b){b.onclick=function(){var i=b.dataset.c;if(!document.getElementById('pd'+i).value){toast(T('Choose a pickup date.','اختاري تاريخ الاستلام.'));return}REQ[i].state='accepted';render();toast(T('Pickup confirmed. A driver will be assigned.','تم تأكيد الاستلام. سيتم تعيين سائق.'))}});
+    [].forEach.call(document.querySelectorAll('[data-t]'),function(b){b.onclick=function(){mine[b.dataset.t].on=!mine[b.dataset.t].on;render()}});
+    [].forEach.call(document.querySelectorAll('[data-u]'),function(b){b.onclick=function(){blocked.splice(b.dataset.u,1);store.set('lm_blocked',blocked);render()}});
+  }
+  document.getElementById('block').onclick=function(){var dt=document.getElementById('bd').value;if(!dt){toast(T('Choose a date.','اختاري تاريخاً.'));return}blocked.push({d:+document.getElementById('bs').value,date:dt});store.set('lm_blocked',blocked);render()};
+  initTabs();window.onLang=render;render();
+})();
+</script>
+</body>
+</html>

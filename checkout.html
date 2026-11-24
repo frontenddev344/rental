@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Request Your Dress | Maison Lumière</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500;600&family=Cairo:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/inner.css">
+</head>
+<body data-page="shop">
+<div id="chrome-top"></div>
+<div class="phero"><div class="wrap">
+  <div class="crumbs"><a href="index.html" data-ar="الرئيسية">Home</a><span>/</span><span data-ar="طلبك">Your request</span></div>
+  <h1 data-ar="أرسلي طلبك">Send your request</h1>
+  <p data-ar="خطوات قليلة فقط. فريقنا يؤكد التوفر مع المالكة ثم ينسّق التوصيل.">Just a few steps. Our team confirms availability with the owner, then arranges delivery.</p>
+</div></div>
+<main class="page"><div class="wrap">
+  <div class="co" id="co" style="display:none">
+    <form id="form" novalidate>
+      <div class="stepper" id="stepper"></div>
+
+      <div class="panel stack" data-step="1">
+        <h2 data-ar="التسليم">Delivery</h2>
+        <div class="fld"><span class="lbl" data-ar="منطقة التوصيل">Delivery zone</span><select class="sel" id="zone"></select></div>
+        <div class="form-grid">
+          <div class="fld"><label for="date" id="datelbl">Delivery date</label><input class="inp" type="date" id="date"></div>
+          <div class="fld"><span class="lbl" data-ar="وقت التوصيل المفضل">Preferred time</span><div class="slots" id="slots"></div></div>
+          <div class="fld full"><label for="loc" data-ar="موقع التوصيل">Delivery location</label><input class="inp" id="loc" data-ar-ph="الحي، الشارع، المبنى" placeholder="Area, street, building"></div>
+          <div class="fld full"><label for="notes" data-ar="ملاحظات للسائق (اختياري)">Notes for the driver (optional)</label><textarea class="ta" id="notes" style="min-height:70px"></textarea></div>
+        </div>
+        <p class="err" id="e1"></p>
+        <div class="row sp"><a class="btn btn-ghost" href="shop.html" data-ar="رجوع">Back</a><button type="button" class="btn btn-dark" data-next data-ar="التالي">Continue</button></div>
+      </div>
+
+      <div class="panel stack" data-step="2" hidden>
+        <h2 data-ar="بياناتك">Your details</h2>
+        <div class="form-grid">
+          <div class="fld"><label for="name" data-ar="الاسم الكامل">Full name</label><input class="inp" id="name" autocomplete="name"></div>
+          <div class="fld"><label for="phone" data-ar="رقم الجوال">Mobile number</label><input class="inp" id="phone" inputmode="tel" placeholder="+966 5X XXX XXXX" autocomplete="tel" style="direction:ltr"></div>
+        </div>
+        <div class="note wine" data-ar="رقمك وعنوانك لا يظهران للمالكة أبداً. يراهما فريقنا والسائق المكلّف فقط.">Your number and address are never shown to the owner. Only our team and the assigned driver can see them.</div>
+        <p class="err" id="e2"></p>
+        <div class="row sp"><button type="button" class="btn btn-ghost" data-prev data-ar="رجوع">Back</button><button type="button" class="btn btn-dark" data-next data-ar="التالي">Continue</button></div>
+      </div>
+
+      <div class="panel stack" data-step="3" hidden>
+        <h2 data-ar="الدفع">Payment</h2>
+        <label class="radio"><input type="radio" name="pay" value="later" checked><span><b data-ar="ادفعي بعد تأكيد الطلب">Pay after your request is confirmed</b><br><span class="muted small" data-ar="لا يُخصم شيء الآن. نرسل لك رابط الدفع بعد موافقة المالكة.">Nothing is charged now. We send a payment link once the owner accepts.</span></span></label>
+        <label class="radio"><input type="radio" name="pay" value="card"><span><b data-ar="بطاقة أو Apple Pay">Card or Apple Pay</b><br><span class="muted small" data-ar="بوابة الدفع الإلكتروني تُربط في مرحلة التطوير.">The online payment gateway is connected during development.</span></span></label>
+        <label class="radio"><input type="radio" name="pay" value="cod"><span><b data-ar="الدفع عند الاستلام">Pay on delivery</b></span></label>
+        <label class="radio" style="border:0;background:none;padding:0"><input type="checkbox" id="terms"><span class="small" data-ar="أوافق على الشروط وسياسة الخصوصية وسياسة الإرجاع.">I agree to the terms, privacy policy and return policy.</span></label>
+        <p class="err" id="e3"></p>
+        <div class="row sp"><button type="button" class="btn btn-ghost" data-prev data-ar="رجوع">Back</button><button type="submit" class="btn btn-gold" data-ar="أرسلي الطلب">Send request</button></div>
+      </div>
+    </form>
+
+    <aside class="panel co-sum" id="sumcol"></aside>
+  </div>
+
+  <div class="panel done-box auth" id="done" hidden style="max-width:640px"></div>
+</div></main>
+<div id="chrome-foot"></div>
+<script src="assets/app.js"></script>
+<script>
+(function(){
+  var d=dressById(param('id',1)),mode=param('mode','rent')==='buy'?'buy':'rent',size=param('size','M');
+  var from=param('from',''),to=param('to','');
+  var step=1,slot=0,doneNo='';
+  var SL=[['9 - 12','٩ - ١٢'],['12 - 3','١٢ - ٣'],['3 - 6','٣ - ٦']];
+  function T(a,b){return getLang()==='ar'?b:a}
+  function zone(){return ZONES.filter(function(z){return z.id===document.getElementById('zone').value})[0]||ZONES[0]}
+  function trips(){return mode==='rent'?2:1}
+  function days(){if(mode!=='rent'||!from)return 1;return Math.round((new Date(to||from)-new Date(from))/864e5)+1}
+  function price(){return mode==='rent'?d.rent*days():d.buy}
+  function sum(){
+    var z=zone(),fee=z.fee*trips(),tot=price()+fee;
+    return '<h3>'+T('Order summary','ملخص الطلب')+'</h3><div class="co-item">'+dressImg(d,300)+'<div><b style="font-family:var(--serif);font-size:1.25rem">'+tr(d)+'</b><div class="small muted">'+T('Size','المقاس')+' '+size+' &middot; '+(mode==='rent'?T('Rental','إيجار'):T('Purchase','شراء'))+'</div>'+(mode==='rent'&&from?'<div class="small muted">'+from+' &rarr; '+(to||from)+'</div>':'')+'</div></div>'+
+      '<div class="sumrow"><span>'+(mode==='rent'?money(d.rent)+' &times; '+days():T('Dress','الفستان'))+'</span><span>'+money(price())+'</span></div>'+
+      '<div class="sumrow"><span>'+T('Delivery','التوصيل')+(trips()>1?' ('+T('delivery + return','توصيل + إرجاع')+')':'')+'</span><span>'+money(fee)+'</span></div>'+
+      '<div class="sumrow tot"><span>'+T('Total','الإجمالي')+'</span><span>'+money(tot)+'</span></div>'+
+      '<p class="muted small" style="margin-top:.8rem">'+T('Sample prices and fees. Final figures are set by the platform.','أسعار ورسوم تجريبية. الأرقام النهائية تحددها المنصة.')+'</p>';
+  }
+  function draw(){
+    var zs=document.getElementById('zone'),cur=zs.value;
+    zs.innerHTML=ZONES.map(function(z){return '<option value="'+z.id+'">'+tr(z)+' ('+money(z.fee)+')</option>'}).join('');
+    if(cur)zs.value=cur;
+    document.getElementById('datelbl').textContent=mode==='rent'?T('Delivery date (before your event)','تاريخ التوصيل (قبل مناسبتك)'):T('Delivery date','تاريخ التوصيل');
+    document.getElementById('slots').innerHTML=SL.map(function(s,i){return '<button type="button" class="chip'+(i===slot?' on':'')+'" data-sl="'+i+'">'+s[getLang()==='ar'?1:0]+'</button>'}).join('');
+    [].forEach.call(document.querySelectorAll('[data-sl]'),function(b){b.onclick=function(){slot=+b.dataset.sl;draw()}});
+    document.getElementById('sumcol').innerHTML=sum();
+    var labels=[T('Delivery','التسليم'),T('Details','البيانات'),T('Payment','الدفع')];
+    document.getElementById('stepper').innerHTML=labels.map(function(l,i){return '<span class="'+(i+1===step?'on':i+1<step?'done':'')+'">'+(i+1)+'. '+l+'</span>'}).join('');
+    if(doneNo)showDone();
+  }
+  function show(n){step=n;[].forEach.call(document.querySelectorAll('[data-step]'),function(p){p.hidden=+p.dataset.step!==n});draw();window.scrollTo({top:0,behavior:'smooth'})}
+  function check(n){
+    var e=document.getElementById('e'+n);e.textContent='';
+    if(n===1){
+      if(!document.getElementById('date').value){e.textContent=T('Choose a delivery date.','اختاري تاريخ التوصيل.');return false}
+      if(mode==='rent'&&from&&document.getElementById('date').value>from){e.textContent=T('Delivery must be on or before your rental start date.','يجب أن يكون التوصيل في أو قبل بداية الإيجار.');return false}
+      if(document.getElementById('loc').value.trim().length<4){e.textContent=T('Add your delivery location.','أضيفي موقع التوصيل.');return false}
+    }
+    if(n===2){
+      if(document.getElementById('name').value.trim().length<2){e.textContent=T('Enter your name.','أدخلي اسمك.');return false}
+      if(!/^\+?[0-9 ]{9,15}$/.test(document.getElementById('phone').value.trim())){e.textContent=T('Enter a valid mobile number.','أدخلي رقم جوال صحيحاً.');return false}
+    }
+    if(n===3&&!document.getElementById('terms').checked){e.textContent=T('Please accept the terms to continue.','يرجى الموافقة على الشروط للمتابعة.');return false}
+    return true;
+  }
+  function showDone(){
+    var el=document.getElementById('done');
+    el.hidden=false;document.getElementById('co').style.display='none';
+    el.innerHTML='<div class="big">'+doneNo+'</div><h2>'+T('Request received','تم استلام طلبك')+'</h2>'+
+      '<p class="muted" style="margin:.5rem 0 1.2rem">'+T('Our team is checking availability with the owner. You will get a message on your mobile as soon as it is confirmed.','فريقنا يتأكد من التوفر مع المالكة. ستصلك رسالة على جوالك فور التأكيد.')+'</p>'+
+      '<ul class="tl" style="text-align:start;max-width:340px;margin:0 auto 1.4rem"><li class="now">'+T('Request received','تم استلام الطلب')+'</li><li>'+T('Owner confirms','تأكيد المالكة')+'</li><li>'+T('Driver assigned','تعيين السائق')+'</li><li>'+T('Delivered to you','التوصيل إليك')+'</li></ul>'+
+      '<div class="row" style="justify-content:center"><a class="btn btn-dark" href="track.html?order='+doneNo+'">'+T('Track this order','تتبعي الطلب')+'</a><a class="btn btn-ghost" href="shop.html">'+T('Keep browsing','تابعي التصفح')+'</a></div>';
+  }
+  var dt=document.getElementById('date'),t=new Date();t.setDate(t.getDate()+1);dt.min=iso(t);
+  if(from){var f=new Date(from);f.setDate(f.getDate()-1);dt.value=iso(f)<dt.min?dt.min:iso(f)}
+  document.getElementById('co').style.display='';
+  document.getElementById('zone').onchange=draw;
+  [].forEach.call(document.querySelectorAll('[data-next]'),function(b){b.onclick=function(){if(check(step))show(step+1)}});
+  [].forEach.call(document.querySelectorAll('[data-prev]'),function(b){b.onclick=function(){show(step-1)}});
+  document.getElementById('form').onsubmit=function(e){
+    e.preventDefault();if(!check(3))return;
+    doneNo='LM-'+String(Math.floor(10000+Math.random()*89999));
+    var orders=store.get('lm_orders')||[];
+    orders.unshift({no:doneNo,dress:d.n,mode:mode,from:from,to:to,stage:0,size:size,zone:zone().id});
+    store.set('lm_orders',orders);
+    showDone();window.scrollTo({top:0});
+  };
+  window.onLang=draw;
+  draw();
+})();
+</script>
+</body>
+</html>

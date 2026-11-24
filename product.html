@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dress Details | Maison Lumière</title>
+<meta name="description" content="Choose your size and dates, check availability and request this dress.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500;600&family=Cairo:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/inner.css">
+</head>
+<body data-page="shop">
+<div id="chrome-top"></div>
+<main class="page"><div class="wrap">
+  <div class="crumbs" style="color:var(--muted);margin-bottom:1.6rem"><a href="index.html" data-ar="الرئيسية">Home</a><span>/</span><a href="shop.html" data-ar="تسوّقي">Shop</a><span>/</span><span id="bc"></span></div>
+  <div class="pd" id="pd"></div>
+
+  <div style="margin-top:4rem">
+    <h2 data-ar="قد يعجبك أيضاً">You may also like</h2>
+    <div class="grid" id="rel" style="grid-template-columns:repeat(4,minmax(0,1fr))"></div>
+  </div>
+</div></main>
+<div id="chrome-foot"></div>
+<script src="assets/app.js"></script>
+<script>
+(function(){
+  var d=dressById(param('id',1));
+  var st={mode:param('mode','rent')==='buy'?'buy':'rent',size:'',start:null,end:null,view:new Date(),thumb:0};
+  st.view.setDate(1);
+  var booked=bookedSet(d.n);
+  var today=new Date();today.setHours(0,0,0,0);
+  var crops=['','object-position:center 12%;transform:scale(1.9)','object-position:center 85%;transform:scale(1.9)','object-position:50% 45%;transform:scale(1.5)'];
+  var MN={en:['January','February','March','April','May','June','July','August','September','October','November','December'],ar:['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر']};
+  var DN={en:['Su','Mo','Tu','We','Th','Fr','Sa'],ar:['أحد','إثن','ثلا','أرب','خمي','جمع','سبت']};
+  function T(a,b){return getLang()==='ar'?b:a}
+  function days(){if(!st.start)return 0;var e=st.end||st.start;return Math.round((e-st.start)/864e5)+1}
+  function fmt(x){return x?x.toLocaleDateString(getLang()==='ar'?'ar-SA-u-nu-latn':'en-GB',{day:'numeric',month:'short'}):'-'}
+
+  function cal(){
+    var y=st.view.getFullYear(),m=st.view.getMonth();
+    var first=new Date(y,m,1).getDay(),dim=new Date(y,m+1,0).getDate();
+    var h='<div class="cal-h"><button id="pm" aria-label="Previous month">&#8249;</button><span>'+MN[getLang()][m]+' '+y+'</span><button id="nm" aria-label="Next month">&#8250;</button></div><div class="cal-g">';
+    DN[getLang()].forEach(function(x){h+='<b>'+x+'</b>'});
+    for(var i=0;i<first;i++)h+='<span></span>';
+    for(var k=1;k<=dim;k++){
+      var dt=new Date(y,m,k),key=iso(dt),cls='',dis='';
+      if(dt<today){cls='d-past';dis=' disabled'}
+      else if(booked[key]){cls='d-booked';dis=' disabled'}
+      else if(st.start&&dt.getTime()===st.start.getTime())cls='d-sel';
+      else if(st.end&&dt.getTime()===st.end.getTime())cls='d-sel';
+      else if(st.start&&st.end&&dt>st.start&&dt<st.end)cls='d-range';
+      h+='<button class="'+cls+'" data-d="'+key+'"'+dis+'>'+k+'</button>';
+    }
+    return h+'</div><div class="legend"><span><i style="background:var(--ink)"></i>'+T('Your dates','تواريخك')+'</span><span><i style="background:var(--blush)"></i>'+T('In between','بينهما')+'</span><span><i style="background:repeating-linear-gradient(45deg,#f1e8dc,#f1e8dc 3px,#fff 3px,#fff 6px);border:1px solid var(--line)"></i>'+T('Booked','محجوز')+'</span></div>';
+  }
+  function summary(){
+    var n=days();
+    if(st.mode==='buy')return '<div class="sumrow"><span>'+T('Price','السعر')+'</span><span>'+money(d.buy)+'</span></div><div class="sumrow"><span>'+T('Delivery','التوصيل')+'</span><span class="muted">'+T('Calculated by zone at checkout','يُحسب حسب المنطقة عند الدفع')+'</span></div>';
+    if(!n)return '<p class="muted small">'+T('Select your rental dates on the calendar.','اختاري تواريخ الإيجار من التقويم.')+'</p>';
+    return '<div class="sumrow"><span>'+fmt(st.start)+' &rarr; '+fmt(st.end||st.start)+'</span><span>'+n+' '+T(n>1?'days':'day',n>1?'أيام':'يوم')+'</span></div>'+
+      '<div class="sumrow"><span>'+money(d.rent)+' &times; '+n+'</span><span>'+money(d.rent*n)+'</span></div>'+
+      '<div class="sumrow"><span>'+T('Delivery and return','التوصيل والإرجاع')+'</span><span class="muted">'+T('By zone at checkout','حسب المنطقة عند الدفع')+'</span></div>'+
+      '<div class="sumrow tot"><span>'+T('Subtotal','المجموع الفرعي')+'</span><span>'+money(d.rent*n)+'</span></div>';
+  }
+  function render(){
+    document.title=tr(d)+' | Maison Lumière';
+    document.getElementById('bc').textContent=tr(d);
+    var thumbs=crops.map(function(c,i){return '<button class="'+(i===st.thumb?'on':'')+'" data-t="'+i+'" aria-label="View '+(i+1)+'">'+dressImg(d,300,' style="'+c+'"')+'</button>'}).join('');
+    var ok=st.size&&(st.mode==='buy'||st.start);
+    document.getElementById('pd').innerHTML=
+      '<div><div class="gal-main">'+dressImg(d,1000,' style="'+crops[st.thumb]+'"')+'</div><div class="thumbs">'+thumbs+'</div></div>'+
+      '<div class="stack">'+
+        '<div><span class="eyebrow">'+tr(OCC[d.occ])+'</span><h1>'+tr(d)+'</h1>'+
+        '<div class="pd-price">'+(st.mode==='rent'?money(d.rent)+' <small>/ '+T('day','اليوم')+'</small>':money(d.buy))+'</div>'+
+        '<p class="muted small" style="margin-top:.3rem">'+T('Listed by a verified owner. Owner details stay private.','معروض من مالكة موثّقة. بيانات المالكة تبقى خاصة.')+'</p></div>'+
+        '<div class="chips" id="mode"><button class="chip'+(st.mode==='rent'?' on':'')+'" data-m="rent">'+T('Rent','إيجار')+'</button><button class="chip'+(st.mode==='buy'?' on':'')+'" data-m="buy">'+T('Buy','شراء')+'</button></div>'+
+        '<div class="fld"><span class="lbl">'+T('Size','المقاس')+'</span><div class="chips" id="sizes">'+d.sizes.map(function(s){return '<button class="chip'+(st.size===s?' on':'')+'" data-s="'+s+'">'+s+'</button>'}).join('')+'</div></div>'+
+        '<div class="fld"><span class="lbl">'+T('Color','اللون')+'</span><div class="row"><span class="sw" style="background:'+COLORS[d.color].hex+'"></span><span class="small">'+tr(COLORS[d.color])+'</span></div></div>'+
+        (st.mode==='rent'?'<div class="fld"><span class="lbl">'+T('Rental dates','تواريخ الإيجار')+'</span><div class="cal" id="cal">'+cal()+'</div><p class="muted small">'+T('We keep one day before and after each rental for pickup and return, so booked dates cannot overlap.','نترك يوماً قبل وبعد كل إيجار للاستلام والإرجاع، لذلك لا يمكن تداخل الحجوزات.')+'</p></div>':'')+
+        '<div class="panel" style="padding:1.1rem" id="sum">'+summary()+'</div>'+
+        '<div class="row"><button class="btn btn-dark" id="go" '+(ok?'':'disabled')+' style="flex:1">'+(st.mode==='rent'?T('Request to rent','اطلبي الإيجار'):T('Request to buy','اطلبي الشراء'))+'</button><a class="btn btn-ghost" href="contact.html">'+T('Ask us','اسأليننا')+'</a></div>'+
+        '<p class="err" id="err"></p>'+
+        '<div><details class="acc" open><summary>'+T('Details','التفاصيل')+'</summary><ul><li>'+tr(d.fabric)+'</li><li>'+T('Sizes available','المقاسات المتوفرة')+': '+d.sizes.join(', ')+'</li><li>'+T('Professionally cleaned between rentals','تُنظّف باحتراف بين كل إيجار')+'</li></ul></details>'+
+        '<details class="acc"><summary>'+T('Delivery and returns','التوصيل والإرجاع')+'</summary><p>'+T('Our own drivers collect the dress from its owner and bring it to you. After a rental, we collect it from you and return it to the owner. You never deal with the owner directly.','سائقونا يستلمون الفستان من مالكته ويوصلونه إليك. بعد الإيجار نستلمه منك ونعيده إلى المالكة. لا تتعاملين مع المالكة مباشرة.')+'</p></details>'+
+        '<details class="acc"><summary>'+T('Privacy','الخصوصية')+'</summary><p>'+T('Phone numbers and addresses are never shared between you and the owner. All communication goes through our team.','لا تتم مشاركة أرقام الهاتف أو العناوين بينك وبين المالكة. كل التواصل يتم عبر فريقنا.')+'</p></details></div>'+
+      '</div>';
+    document.getElementById('rel').innerHTML=DRESSES.filter(function(x){return x.n!==d.n}).slice(0,4).map(card).join('');
+    bind();
+  }
+  function bind(){
+    [].forEach.call(document.querySelectorAll('[data-t]'),function(b){b.onclick=function(){st.thumb=Number(b.dataset.t);render()}});
+    [].forEach.call(document.querySelectorAll('#mode [data-m]'),function(b){b.onclick=function(){st.mode=b.dataset.m;render()}});
+    [].forEach.call(document.querySelectorAll('#sizes [data-s]'),function(b){b.onclick=function(){st.size=b.dataset.s;render()}});
+    var pm=document.getElementById('pm');
+    if(pm){
+      pm.onclick=function(){var v=new Date(st.view);v.setMonth(v.getMonth()-1);if(v>=new Date(today.getFullYear(),today.getMonth(),1)){st.view=v;refreshCal()}};
+      document.getElementById('nm').onclick=function(){st.view.setMonth(st.view.getMonth()+1);refreshCal()};
+      bindDays();
+    }
+    document.getElementById('go').onclick=function(){
+      var q='?id='+d.n+'&mode='+st.mode+'&size='+st.size;
+      if(st.mode==='rent')q+='&from='+iso(st.start)+'&to='+iso(st.end||st.start);
+      location.href='checkout.html'+q;
+    };
+  }
+  function refreshCal(){document.getElementById('cal').innerHTML=cal();bindDays();document.getElementById('pm').onclick=bind_pm;document.getElementById('nm').onclick=bind_nm}
+  function bind_pm(){var v=new Date(st.view);v.setMonth(v.getMonth()-1);if(v>=new Date(today.getFullYear(),today.getMonth(),1)){st.view=v;refreshCal()}}
+  function bind_nm(){st.view.setMonth(st.view.getMonth()+1);refreshCal()}
+  function bindDays(){
+    [].forEach.call(document.querySelectorAll('.cal-g button[data-d]'),function(b){
+      b.onclick=function(){
+        var p=b.dataset.d.split('-'),dt=new Date(+p[0],+p[1]-1,+p[2]);
+        document.getElementById('err').textContent='';
+        if(!st.start||st.end||dt<st.start){st.start=dt;st.end=null}
+        else{
+          var clash=false;for(var x=new Date(st.start);x<=dt;x.setDate(x.getDate()+1)){if(booked[iso(x)])clash=true}
+          if(clash){document.getElementById('err').textContent=T('Those dates include a booked day. Please pick a range that avoids it.','هذه التواريخ تتضمن يوماً محجوزاً. اختاري نطاقاً يتجنبه.');st.start=dt;st.end=null}
+          else st.end=dt;
+        }
+        document.getElementById('cal').innerHTML=cal();bindDays();
+        document.getElementById('pm').onclick=bind_pm;document.getElementById('nm').onclick=bind_nm;
+        document.getElementById('sum').innerHTML=summary();
+        document.getElementById('go').disabled=!(st.size&&st.start);
+      };
+    });
+  }
+  window.onLang=render;
+  render();
+})();
+</script>
+<style>@media(max-width:1050px){#rel{grid-template-columns:repeat(2,minmax(0,1fr))!important}}</style>
+</body>
+</html>

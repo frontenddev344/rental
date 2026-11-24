@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sign In | Maison Lumière</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500;600&family=Cairo:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/inner.css">
+</head>
+<body data-page="login">
+<div id="chrome-top"></div>
+<main class="page"><div class="wrap">
+  <div class="auth">
+    <div style="text-align:center;margin-bottom:1.6rem">
+      <span class="eyebrow" data-ar="أهلاً بك">Welcome</span>
+      <h1 style="font-size:2.8rem;margin-top:.4rem" data-ar="تسجيل الدخول أو إنشاء حساب">Sign in or create an account</h1>
+      <p class="muted" data-ar="نستخدم رقم جوالك ورمز تحقق. لا حاجة لكلمة مرور.">We use your mobile number and a one-time code. No password needed.</p>
+    </div>
+    <div class="tabs2" role="tablist">
+      <button class="on" id="t-customer" data-ar="عميلة">Customer</button>
+      <button id="t-owner" data-ar="مالكة فستان">Dress owner</button>
+    </div>
+    <div class="panel stack" id="p1">
+      <div class="fld"><label for="ph" data-ar="رقم الجوال">Mobile number</label>
+        <div class="phone"><select class="sel" id="cc" aria-label="Country code"><option>+966</option><option>+971</option><option>+965</option><option>+974</option><option>+973</option><option>+968</option><option>+962</option><option>+20</option></select><input class="inp" id="ph" inputmode="tel" placeholder="5X XXX XXXX" style="direction:ltr" autocomplete="tel-national"></div></div>
+      <p class="err" id="e1"></p>
+      <button class="btn btn-dark" id="send" style="width:100%" data-ar="أرسلي الرمز">Send code</button>
+    </div>
+    <div class="panel stack" id="p2" hidden>
+      <p class="small muted" id="sent"></p>
+      <div class="otp" id="otp"></div>
+      <p class="err" id="e2" style="text-align:center"></p>
+      <button class="btn btn-dark" id="verify" style="width:100%" data-ar="تأكيد ومتابعة">Verify and continue</button>
+      <div class="row sp small"><button class="muted" id="back" data-ar="تغيير الرقم" style="text-decoration:underline">Change number</button><button id="resend" style="text-decoration:underline;color:var(--wine)" data-ar="إعادة إرسال الرمز">Resend code</button></div>
+      <div class="note" data-ar="نسخة تجريبية: أدخلي أي 6 أرقام لمتابعة العرض.">Demo mode: enter any 6 digits to continue.</div>
+    </div>
+    <p class="muted small" style="text-align:center;margin-top:1.2rem" data-ar="بالمتابعة توافقين على الشروط وسياسة الخصوصية.">By continuing you agree to the terms and privacy policy.</p>
+    <div class="row small" style="justify-content:center;margin-top:.5rem"><a href="driver.html" class="muted" style="text-decoration:underline" data-ar="دخول السائق">Driver sign in</a><span class="muted">&middot;</span><a href="admin.html" class="muted" style="text-decoration:underline" data-ar="دخول الإدارة">Admin sign in</a></div>
+  </div>
+</div></main>
+<div id="chrome-foot"></div>
+<script src="assets/app.js"></script>
+<script>
+(function(){
+  var role='customer';
+  function T(a,b){return getLang()==='ar'?b:a}
+  var otp=document.getElementById('otp');
+  otp.innerHTML=[0,1,2,3,4,5].map(function(i){return '<input inputmode="numeric" maxlength="1" aria-label="Digit '+(i+1)+'" autocomplete="'+(i?'off':'one-time-code')+'">'}).join('');
+  var boxes=[].slice.call(otp.children);
+  boxes.forEach(function(b,i){
+    b.oninput=function(){b.value=b.value.replace(/\D/g,'');if(b.value&&boxes[i+1])boxes[i+1].focus()};
+    b.onkeydown=function(e){if(e.key==='Backspace'&&!b.value&&boxes[i-1])boxes[i-1].focus()};
+    b.onpaste=function(e){var t=(e.clipboardData.getData('text')||'').replace(/\D/g,'').slice(0,6);if(!t)return;e.preventDefault();t.split('').forEach(function(c,k){boxes[k].value=c});(boxes[t.length]||boxes[5]).focus()};
+  });
+  function setRole(r){role=r;document.getElementById('t-customer').classList.toggle('on',r==='customer');document.getElementById('t-owner').classList.toggle('on',r==='owner')}
+  document.getElementById('t-customer').onclick=function(){setRole('customer')};
+  document.getElementById('t-owner').onclick=function(){setRole('owner')};
+  if(location.hash==='#owner')setRole('owner');
+  document.getElementById('send').onclick=function(){
+    var v=document.getElementById('ph').value.replace(/\s/g,'');
+    if(!/^[0-9]{8,11}$/.test(v)){document.getElementById('e1').textContent=T('Enter a valid mobile number.','أدخلي رقم جوال صحيحاً.');return}
+    document.getElementById('e1').textContent='';
+    document.getElementById('sent').textContent=T('We sent a 6 digit code to ','أرسلنا رمزاً من 6 أرقام إلى ')+document.getElementById('cc').value+' '+v;
+    document.getElementById('p1').hidden=true;document.getElementById('p2').hidden=false;boxes[0].focus();
+  };
+  document.getElementById('back').onclick=function(){document.getElementById('p2').hidden=true;document.getElementById('p1').hidden=false};
+  document.getElementById('resend').onclick=function(){toast(T('A new code was sent.','تم إرسال رمز جديد.'))};
+  document.getElementById('verify').onclick=function(){
+    var code=boxes.map(function(b){return b.value}).join('');
+    if(code.length<6){document.getElementById('e2').textContent=T('Enter all 6 digits.','أدخلي الأرقام الستة.');return}
+    store.set('lm_user',{role:role});
+    location.href=role==='owner'?'owner.html':'customer.html';
+  };
+  window.onLang=function(){};
+})();
+</script>
+</body>
+</html>

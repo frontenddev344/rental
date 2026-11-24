@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Track Your Order | Maison Lumière</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500;600&family=Cairo:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/inner.css">
+</head>
+<body data-page="track">
+<div id="chrome-top"></div>
+<div class="phero"><div class="wrap">
+  <div class="crumbs"><a href="index.html" data-ar="الرئيسية">Home</a><span>/</span><span data-ar="تتبع الطلب">Track order</span></div>
+  <h1 data-ar="أين فستانك؟">Where is your dress?</h1>
+  <p data-ar="أدخلي رقم طلبك لترى كل مرحلة من الاستلام حتى التوصيل والإرجاع.">Enter your order number to see every stage from pickup to delivery and return.</p>
+</div></div>
+<main class="page"><div class="wrap" style="max-width:820px">
+  <form id="f" class="panel row" style="align-items:end">
+    <div class="fld" style="flex:1;min-width:220px"><label for="no" data-ar="رقم الطلب">Order number</label><input class="inp" id="no" placeholder="LM-20418" style="direction:ltr"></div>
+    <button class="btn btn-dark" data-ar="تتبّعي">Track</button>
+    <p class="small muted" style="width:100%" data-ar="جرّبي الطلب التجريبي:">Try the demo order:</p>
+    <button type="button" class="chip" id="demo">LM-20418</button>
+  </form>
+  <p class="err" id="err" style="margin-top:.8rem"></p>
+  <div id="res" style="margin-top:1.4rem"></div>
+</div></main>
+<div id="chrome-foot"></div>
+<script src="assets/app.js"></script>
+<script>
+(function(){
+  var KEYS=['requested','confirmed','pending','picked','way','delivered','retsched','returned'];
+  var cur=null;
+  function T(a,b){return getLang()==='ar'?b:a}
+  function find(no){
+    no=no.trim().toUpperCase();
+    if(no==='LM-20418')return {no:no,dress:2,mode:'rent',from:'',to:'',stage:4,demo:true};
+    return (store.get('lm_orders')||[]).filter(function(o){return o.no===no})[0]||null;
+  }
+  function show(o){
+    cur=o;var d=dressById(o.dress);
+    var rent=o.mode==='rent',keys=rent?KEYS:KEYS.slice(0,6);
+    var note={
+      0:T('Our team is checking availability with the owner.','فريقنا يتأكد من التوفر مع المالكة.'),
+      1:T('The owner confirmed. A driver will be assigned shortly.','أكدت المالكة. سيتم تعيين سائق قريباً.'),
+      2:T('A driver is assigned and will collect the dress from the owner.','تم تعيين سائق وسيستلم الفستان من المالكة.'),
+      3:T('The driver has the dress and is preparing to bring it to you.','السائق استلم الفستان وسيتجه إليك.'),
+      4:T('Your driver is on the way.','سائقك في الطريق.'),
+      5:T('Delivered. Enjoy your event.','تم التوصيل. استمتعي بمناسبتك.'),
+      6:T('Return collection is scheduled.','تمت جدولة استلام الإرجاع.'),
+      7:T('Returned to the owner. This order is closed.','أُعيد الفستان إلى المالكة. تم إغلاق الطلب.')
+    }[o.stage];
+    document.getElementById('res').innerHTML=
+      '<div class="panel stack"><div class="row sp"><div class="row" style="gap:1rem">'+'<div style="width:64px;height:86px;overflow:hidden">'+dressImg(d,200,' style="width:100%;height:100%;object-fit:cover"')+'</div>'+'<div><b style="font-family:var(--serif);font-size:1.5rem">'+tr(d)+'</b><div class="small muted">'+o.no+' &middot; '+(rent?T('Rental','إيجار'):T('Purchase','شراء'))+'</div></div></div>'+pill(KEYS[o.stage])+'</div>'+
+      '<div class="note">'+note+'</div>'+
+      '<ul class="tl">'+keys.map(function(k,i){return '<li class="'+(i<o.stage?'done':i===o.stage?'now':'')+'">'+tr(STATUS[k])+'</li>'}).join('')+'</ul>'+
+      (o.stage===4?'<div class="panel" style="text-align:center;background:var(--sand);border:0"><div class="small muted">'+T('Share this code with the driver when you receive the dress','شاركي هذا الرمز مع السائق عند استلام الفستان')+'</div><div class="code">4 8 2 1</div></div>':'')+
+      (o.stage>=2&&o.stage<=5?'<div class="small muted">'+T('Driver','السائق')+': Faisal &middot; '+T('Estimated arrival','الوصول المتوقع')+': 35 '+T('min','دقيقة')+'</div>':'')+
+      '<div class="row sp"><a class="btn btn-ghost sm" href="contact.html">'+T('Contact our team','تواصلي مع فريقنا')+'</a>'+(o.stage<(rent?7:5)?'<button class="btn btn-ghost sm" id="adv">'+T('Demo: advance status','تجريبي: تقدّم الحالة')+'</button>':'')+'</div></div>';
+    var a=document.getElementById('adv');
+    if(a)a.onclick=function(){o.stage++;if(!o.demo){var all=store.get('lm_orders')||[];all.forEach(function(x){if(x.no===o.no)x.stage=o.stage});store.set('lm_orders',all)}show(o)};
+  }
+  function go(no){
+    var er=document.getElementById('err');er.textContent='';
+    var o=find(no);
+    if(!o){document.getElementById('res').innerHTML='';er.textContent=T('We could not find that order. Check the number, or contact us.','لم نجد هذا الطلب. تأكدي من الرقم أو تواصلي معنا.');return}
+    show(o);
+  }
+  document.getElementById('f').onsubmit=function(e){e.preventDefault();go(document.getElementById('no').value)};
+  document.getElementById('demo').onclick=function(){document.getElementById('no').value='LM-20418';go('LM-20418')};
+  var q=param('order','');if(q){document.getElementById('no').value=q;go(q)}
+  window.onLang=function(){if(cur)show(cur)};
+})();
+</script>
+</body>
+</html>

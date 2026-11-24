@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shop Dresses | Maison Lumière</title>
+<meta name="description" content="Browse designer dresses to rent or buy. Filter by size, price, color and occasion.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500;600&family=Cairo:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/inner.css">
+</head>
+<body data-page="shop">
+<div id="chrome-top"></div>
+
+<div class="phero"><div class="wrap">
+  <div class="crumbs"><a href="index.html" data-ar="الرئيسية">Home</a><span>/</span><span data-ar="تسوّقي">Shop</span></div>
+  <h1 data-ar="كل الفساتين">All dresses</h1>
+  <p data-ar="استأجري أو اشتري من مجموعة منتقاة من ملّاك موثوقين. كل فستان يُراجع قبل نشره.">Rent or buy from a curated set of trusted owners. Every dress is reviewed before it is listed.</p>
+</div></div>
+
+<main class="page"><div class="wrap">
+  <div class="row sp" style="margin-bottom:1.4rem">
+    <div class="row">
+      <button class="btn btn-ghost sm fbtn" id="fbtn" data-ar="الفلاتر">Filters</button>
+      <span class="count" id="count"></span>
+    </div>
+    <div class="fld" style="min-width:210px"><label for="sort" data-ar="الترتيب">Sort by</label>
+      <select class="sel" id="sort"><option value="new" data-ar="الأحدث">Newest</option><option value="plh" data-ar="السعر: من الأقل">Price: low to high</option><option value="phl" data-ar="السعر: من الأعلى">Price: high to low</option></select></div>
+  </div>
+
+  <div class="shop">
+    <aside class="filters" id="filters" aria-label="Filters">
+      <div class="fld"><span class="lbl" data-ar="النوع">Type</span>
+        <div class="chips" id="f-mode"><button class="chip on" data-v="rent" data-ar="إيجار">Rent</button><button class="chip" data-v="buy" data-ar="شراء">Buy</button></div></div>
+      <div class="fld"><span class="lbl" data-ar="المناسبة">Occasion</span><div class="chips" id="f-occ"></div></div>
+      <div class="fld"><span class="lbl" data-ar="المقاس">Size</span><div class="chips" id="f-size"></div></div>
+      <div class="fld"><span class="lbl" data-ar="اللون">Color</span><div class="chips" id="f-color" style="gap:.6rem"></div></div>
+      <div class="fld"><label for="f-price"><span data-ar="أعلى سعر">Max price</span>: <b id="pv"></b></label><input class="range" id="f-price" type="range"></div>
+      <div class="fld"><label for="f-date" data-ar="متاح بتاريخ">Available on</label><input class="inp" id="f-date" type="date"></div>
+      <button class="btn btn-ghost sm" id="reset" data-ar="مسح الفلاتر">Clear filters</button>
+    </aside>
+    <div>
+      <div class="grid" id="grid" style="grid-template-columns:repeat(3,minmax(0,1fr))"></div>
+      <div class="empty" id="empty" hidden data-ar="لا توجد فساتين تطابق هذه الفلاتر. جرّبي توسيع البحث.">No dresses match these filters. Try widening your search.</div>
+    </div>
+  </div>
+</div></main>
+
+<div id="chrome-foot"></div>
+<script src="assets/app.js"></script>
+<script>
+(function(){
+  var S={mode:W_mode(),occ:{},size:{},color:{},max:0,date:''};
+  function W_mode(){return param('mode','rent')==='buy'?'buy':'rent'}
+  var o=param('occ',''); if(o) S.occ[o]=1;
+  var maxAll=Math.max.apply(null,DRESSES.map(function(d){return d.buy}));
+  var price=document.getElementById('f-price');
+  price.min=0;price.max=maxAll;price.step=10;
+  function setMax(){S.max=Number(price.value)}
+  price.value=maxAll;setMax();
+
+  function chips(id,items,key,mk){
+    var el=document.getElementById(id);
+    el.innerHTML=items.map(mk).join('');
+    [].forEach.call(el.children,function(b){
+      b.onclick=function(){var v=b.dataset.v;S[key][v]?delete S[key][v]:S[key][v]=1;render()};
+    });
+  }
+  function build(){
+    document.getElementById('f-mode').querySelectorAll('.chip').forEach(function(b){b.classList.toggle('on',b.dataset.v===S.mode);b.onclick=function(){S.mode=b.dataset.v;render()}});
+    chips('f-occ',Object.keys(OCC),'occ',function(k){return '<button class="chip'+(S.occ[k]?' on':'')+'" data-v="'+k+'">'+tr(OCC[k])+'</button>'});
+    chips('f-size',['XS','S','M','L','XL'],'size',function(k){return '<button class="chip'+(S.size[k]?' on':'')+'" data-v="'+k+'">'+k+'</button>'});
+    var cs=[];DRESSES.forEach(function(d){if(cs.indexOf(d.color)<0)cs.push(d.color)});
+    var el=document.getElementById('f-color');
+    el.innerHTML=cs.map(function(k){return '<button class="sw'+(S.color[k]?' on':'')+'" data-v="'+k+'" style="background:'+COLORS[k].hex+'" title="'+tr(COLORS[k])+'" aria-label="'+tr(COLORS[k])+'"></button>'}).join('');
+    [].forEach.call(el.children,function(b){b.onclick=function(){var v=b.dataset.v;S.color[v]?delete S.color[v]:S.color[v]=1;render()}});
+  }
+  function render(){
+    var cap=S.mode==='buy'?maxAll:Math.max.apply(null,DRESSES.map(function(d){return d.rent}));
+    if(Number(price.max)!==cap){price.max=cap;price.value=cap;setMax()}
+    build();
+    document.getElementById('pv').textContent=money(S.max)+(S.mode==='rent'?(getLang()==='ar'?' / اليوم':' / day'):'');
+    var booked=S.date;
+    var list=DRESSES.filter(function(d){
+      var p=S.mode==='buy'?d.buy:d.rent;
+      if(Object.keys(S.occ).length&&!S.occ[d.occ])return false;
+      if(Object.keys(S.color).length&&!S.color[d.color])return false;
+      if(Object.keys(S.size).length&&!d.sizes.some(function(s){return S.size[s]}))return false;
+      if(p>S.max)return false;
+      if(booked&&S.mode==='rent'&&bookedSet(d.n)[booked])return false;
+      return true;
+    });
+    var sort=document.getElementById('sort').value;
+    var pr=function(d){return S.mode==='buy'?d.buy:d.rent};
+    if(sort==='plh')list.sort(function(a,b){return pr(a)-pr(b)});
+    if(sort==='phl')list.sort(function(a,b){return pr(b)-pr(a)});
+    var g=document.getElementById('grid');
+    g.innerHTML=list.map(card).join('');
+    g.hidden=!list.length;document.getElementById('empty').hidden=!!list.length;
+    document.getElementById('count').textContent=list.length+(getLang()==='ar'?' فستان':' dresses');
+  }
+  price.oninput=function(){setMax();render()};
+  document.getElementById('sort').onchange=render;
+  document.getElementById('f-date').onchange=function(){S.date=this.value;render()};
+  document.getElementById('reset').onclick=function(){S.occ={};S.size={};S.color={};price.value=maxAll;setMax();S.date='';document.getElementById('f-date').value='';render()};
+  document.getElementById('fbtn').onclick=function(){document.getElementById('filters').classList.toggle('open')};
+  window.onLang=render;
+  render();
+})();
+</script>
+<style>@media(max-width:1050px){#grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}</style>
+</body>
+</html>

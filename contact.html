@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contact | Maison Lumière</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500;600&family=Cairo:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/inner.css">
+</head>
+<body data-page="contact">
+<div id="chrome-top"></div>
+<div class="phero"><div class="wrap">
+  <div class="crumbs"><a href="index.html" data-ar="الرئيسية">Home</a><span>/</span><span data-ar="تواصلي معنا">Contact</span></div>
+  <h1 data-ar="نحن هنا لمساعدتك">We are here to help</h1>
+  <p data-ar="كل التواصل مع المالكات والسائقين يتم عبرنا. راسلينا على واتساب أو من هنا.">All contact with owners and drivers goes through us. Message us on WhatsApp or here.</p>
+</div></div>
+<main class="page"><div class="wrap cols2" style="align-items:start">
+  <div class="stack">
+    <div class="feat"><div class="ic">✆</div><h3>WhatsApp</h3><p data-ar="الأسرع للأسئلة عن طلب جارٍ.">Fastest for questions about an order in progress.</p><p style="margin:.6rem 0"><b style="direction:ltr;display:inline-block" id="num">+966 5X XXX XXXX</b></p><a class="btn btn-dark sm" href="#" id="wa" data-ar="افتحي واتساب">Open WhatsApp</a></div>
+    <div class="feat"><div class="ic">✉</div><h3 data-ar="البريد الإلكتروني">Email</h3><p style="direction:ltr;display:inline-block">support@maisonlumiere.com</p></div>
+    <div class="feat"><div class="ic">◷</div><h3 data-ar="ساعات الدعم">Support hours</h3><p data-ar="يومياً من 9 صباحاً حتى 10 مساءً. الأرقام والعناوين في هذه الصفحة للعرض فقط.">Daily, 9 am to 10 pm. Numbers and addresses on this page are placeholders.</p></div>
+  </div>
+  <form class="panel stack" id="f" novalidate>
+    <h2 data-ar="أرسلي رسالة">Send a message</h2>
+    <div class="form-grid">
+      <div class="fld"><label for="n" data-ar="الاسم">Name</label><input class="inp" id="n"></div>
+      <div class="fld"><label for="p" data-ar="رقم الجوال">Mobile</label><input class="inp" id="p" inputmode="tel" style="direction:ltr"></div>
+      <div class="fld full"><label for="t" data-ar="الموضوع">Topic</label><select class="sel" id="t"><option data-ar="سؤال عن طلب">Question about an order</option><option data-ar="مشكلة في التوصيل أو الإرجاع">Delivery or return issue</option><option data-ar="الإبلاغ عن ضرر أو خلاف">Report damage or a dispute</option><option data-ar="أنا مالكة فستان">I am a dress owner</option><option data-ar="أخرى">Other</option></select></div>
+      <div class="fld full"><label for="m" data-ar="الرسالة">Message</label><textarea class="ta" id="m"></textarea></div>
+    </div>
+    <p class="err" id="err"></p>
+    <button class="btn btn-dark" data-ar="إرسال">Send</button>
+  </form>
+</div></main>
+<div id="chrome-foot"></div>
+<script src="assets/app.js"></script>
+<script>
+(function(){
+  document.getElementById('wa').onclick=function(e){e.preventDefault();toast(getLang()==='ar'?'سيُربط هذا الزر برقم واتساب الفعلي.':'This button will link to the real WhatsApp number.')};
+  document.getElementById('f').onsubmit=function(e){
+    e.preventDefault();var er=document.getElementById('err');
+    if(document.getElementById('n').value.trim().length<2||document.getElementById('m').value.trim().length<5){er.textContent=getLang()==='ar'?'أدخلي اسمك ورسالتك.':'Enter your name and a message.';return}
+    er.textContent='';this.reset();toast(getLang()==='ar'?'تم إرسال رسالتك. سنرد قريباً.':'Message sent. We will reply soon.');
+  };
+  window.onLang=function(){};
+})();
+</script>
+</body>
+</html>

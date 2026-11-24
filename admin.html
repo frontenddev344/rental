@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin Dashboard | Maison Lumière</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500;600&family=Cairo:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/inner.css">
+</head>
+<body data-page="admin">
+<div id="chrome-top"></div>
+<div class="dash">
+  <nav class="side" aria-label="Admin">
+    <div class="who">Admin<small data-ar="إدارة المنصة">Platform control</small></div>
+    <button data-tab="over" data-ar="نظرة عامة">Overview</button>
+    <button data-tab="orders" data-ar="الطلبات">Orders</button>
+    <button data-tab="list" data-ar="الفساتين">Listings <em id="lb">0</em></button>
+    <button data-tab="users" data-ar="المستخدمون">Customers and owners</button>
+    <button data-tab="drivers" data-ar="السائقون">Drivers</button>
+    <button data-tab="fin" data-ar="المالية">Finance</button>
+    <button data-tab="issues" data-ar="الدعم والمشاكل">Support and issues</button>
+  </nav>
+  <div class="main">
+    <section data-pane="over">
+      <h1 data-ar="نظرة عامة">Overview</h1>
+      <div class="stats"><div class="stat"><b id="o1"></b><span data-ar="طلبات جارية">Active orders</span></div><div class="stat"><b id="o2"></b><span data-ar="بانتظار تعيين سائق">Need a driver</span></div><div class="stat"><b id="o3"></b><span data-ar="فساتين بانتظار الموافقة">Dresses awaiting approval</span></div><div class="stat"><b id="o4"></b><span data-ar="إرجاعات متأخرة">Late returns</span></div></div>
+      <div class="panel"><h3 data-ar="يحتاج إجراء">Needs action</h3><div id="todo"></div></div>
+    </section>
+    <section data-pane="orders" hidden>
+      <h1 data-ar="الطلبات">Orders</h1>
+      <div class="panel tablewrap"><table class="tbl"><thead><tr><th data-ar="الطلب">Order</th><th data-ar="الفستان">Dress</th><th data-ar="النوع">Type</th><th data-ar="الحالة">Status</th><th data-ar="السائق">Driver</th><th data-ar="تحديث">Update</th></tr></thead><tbody id="ord"></tbody></table></div>
+    </section>
+    <section data-pane="list" hidden>
+      <h1 data-ar="الموافقة على الفساتين">Listing approvals</h1><div id="appr"></div>
+    </section>
+    <section data-pane="users" hidden>
+      <h1 data-ar="العملاء والمالكات">Customers and owners</h1>
+      <div class="panel tablewrap"><table class="tbl"><thead><tr><th data-ar="الاسم">Name</th><th data-ar="الدور">Role</th><th data-ar="الجوال">Mobile</th><th data-ar="الطلبات">Orders</th><th data-ar="الحالة">Status</th></tr></thead><tbody>
+        <tr><td>Sara</td><td data-ar="عميلة">Customer</td><td style="direction:ltr">+966 5X XXX 1042</td><td>3</td><td><span class="pill ok" data-ar="نشطة">Active</span></td></tr>
+        <tr><td>Layla</td><td data-ar="عميلة">Customer</td><td style="direction:ltr">+966 5X XXX 7710</td><td>1</td><td><span class="pill ok" data-ar="نشطة">Active</span></td></tr>
+        <tr><td>Noor</td><td data-ar="مالكة">Owner</td><td style="direction:ltr">+966 5X XXX 3321</td><td>6</td><td><span class="pill ok" data-ar="موثّقة">Verified</span></td></tr>
+        <tr><td>Hala</td><td data-ar="مالكة">Owner</td><td style="direction:ltr">+966 5X XXX 9054</td><td>0</td><td><span class="pill warn" data-ar="بانتظار المراجعة">Pending review</span></td></tr>
+      </tbody></table></div>
+      <p class="muted small" style="margin-top:.6rem" data-ar="الإدارة وحدها ترى بيانات الاتصال الكاملة.">Only admins see full contact details.</p>
+    </section>
+    <section data-pane="drivers" hidden>
+      <h1 data-ar="السائقون">Drivers</h1>
+      <div class="panel tablewrap"><table class="tbl"><thead><tr><th data-ar="السائق">Driver</th><th data-ar="مهام اليوم">Jobs today</th><th data-ar="الحالة">Status</th></tr></thead><tbody id="drv"></tbody></table></div>
+    </section>
+    <section data-pane="fin" hidden>
+      <h1 data-ar="المالية">Finance</h1>
+      <div class="stats"><div class="stat"><b id="f1"></b><span data-ar="إجمالي المبيعات">Gross sales</span></div><div class="stat"><b id="f2"></b><span data-ar="عمولة المنصة">Platform commission</span></div><div class="stat"><b id="f3"></b><span data-ar="رسوم التوصيل">Delivery fees</span></div><div class="stat"><b id="f4"></b><span data-ar="مستحق للمالكات">Owed to owners</span></div></div>
+      <div class="panel"><h3 data-ar="آخر 6 أشهر">Last 6 months</h3><div class="bars" id="bars"></div><div class="legend"><span><i style="background:var(--wine)"></i><span data-ar="المبيعات">Sales</span></span><span><i style="background:var(--gold)"></i><span data-ar="العمولة">Commission</span></span></div></div>
+      <p class="muted small" style="margin-top:.6rem" data-ar="أرقام تجريبية.">Sample figures.</p>
+    </section>
+    <section data-pane="issues" hidden>
+      <h1 data-ar="الدعم والمشاكل">Support and issues</h1>
+      <div class="cols2" style="align-items:start">
+        <div class="panel stack"><h3 data-ar="تسجيل مشكلة">Record an issue</h3>
+          <div class="fld"><label for="in" data-ar="رقم الطلب">Order number</label><input class="inp" id="in" placeholder="LM-19877" style="direction:ltr"></div>
+          <div class="fld"><label for="it" data-ar="النوع">Type</label><select class="sel" id="it"><option value="late" data-ar="إرجاع متأخر">Late return</option><option value="damage" data-ar="ضرر في الفستان">Damage</option><option value="dispute" data-ar="خلاف">Dispute</option><option value="other" data-ar="أخرى">Other</option></select></div>
+          <div class="fld"><label for="nt" data-ar="ملاحظات">Notes</label><textarea class="ta" id="nt"></textarea></div>
+          <button class="btn btn-dark" id="addi" data-ar="حفظ">Save</button></div>
+        <div class="panel"><h3 data-ar="السجل">Log</h3><div id="log"></div></div>
+      </div>
+      <div class="panel" style="margin-top:1.4rem"><h3 data-ar="رسائل العملاء">Customer messages</h3><div id="msgs"></div></div>
+    </section>
+  </div>
+</div>
+<div id="chrome-foot"></div>
+<script src="assets/app.js"></script>
+<script>
+(function(){
+  function T(a,b){return getLang()==='ar'?b:a}
+  var KEYS=['requested','confirmed','pending','picked','way','delivered','retsched','returned'];
+  var ORD=[{no:'LM-20431',d:1,mode:'rent',s:1,drv:''},{no:'LM-20427',d:4,mode:'rent',s:0,drv:''},{no:'LM-20418',d:2,mode:'rent',s:4,drv:'Faisal'},{no:'LM-20390',d:6,mode:'buy',s:2,drv:''},{no:'LM-19877',d:6,mode:'rent',s:6,drv:'Omar'}];
+  var LST=[{d:8,owner:'Noor',price:110,st:'pending'},{d:7,owner:'Hala',price:170,st:'pending'}];
+  var LOG=[{no:'LM-19120',t:'late',n:{en:'Returned one day late',ar:'أُعيد متأخراً يوماً'}}];
+  var MSG=[{who:'Sara',m:{en:'Can I change my delivery time for LM-20418?',ar:'هل أستطيع تغيير وقت التوصيل للطلب LM-20418؟'},done:false},{who:'Layla',m:{en:'Thank you, the dress was perfect.',ar:'شكراً، كان الفستان رائعاً.'},done:true}];
+  var TYPES={late:{en:'Late return',ar:'إرجاع متأخر'},damage:{en:'Damage',ar:'ضرر'},dispute:{en:'Dispute',ar:'خلاف'},other:{en:'Other',ar:'أخرى'}};
+  function render(){
+    var act=ORD.filter(function(o){return o.s<(o.mode==='rent'?7:5)});
+    var need=ORD.filter(function(o){return !o.drv&&o.s<5});
+    var pend=LST.filter(function(l){return l.st==='pending'});
+    document.getElementById('o1').textContent=act.length;document.getElementById('o2').textContent=need.length;document.getElementById('o3').textContent=pend.length;document.getElementById('o4').textContent=LOG.filter(function(l){return l.t==='late'}).length;
+    document.getElementById('lb').textContent=pend.length;
+    document.getElementById('todo').innerHTML=(need.map(function(o){return '<div class="row sp" style="padding:.5rem 0;border-bottom:1px solid var(--line)"><span>'+o.no+' &middot; '+T('assign a driver','عيّني سائقاً')+'</span><button class="btn btn-ghost sm" data-goto="orders">'+T('Open','فتح')+'</button></div>'}).join('')||'')+
+      (pend.length?'<div class="row sp" style="padding:.5rem 0"><span>'+pend.length+' '+T('dresses await approval','فساتين بانتظار الموافقة')+'</span><button class="btn btn-ghost sm" data-goto="list">'+T('Review','مراجعة')+'</button></div>':'');
+    document.getElementById('ord').innerHTML=ORD.map(function(o,i){var d=dressById(o.d);
+      return '<tr><td><b>'+o.no+'</b></td><td>'+tr(d)+'</td><td>'+(o.mode==='rent'?T('Rent','إيجار'):T('Buy','شراء'))+'</td><td>'+pill(KEYS[o.s])+'</td>'+
+        '<td><select class="sel" data-drv="'+i+'" aria-label="Driver"><option value="">'+T('Unassigned','غير معيّن')+'</option>'+DRIVERS.map(function(x){return '<option'+(o.drv===x?' selected':'')+'>'+x+'</option>'}).join('')+'</select></td>'+
+        '<td><select class="sel" data-st="'+i+'" aria-label="Status">'+KEYS.slice(0,o.mode==='rent'?8:6).map(function(k,j){return '<option value="'+j+'"'+(o.s===j?' selected':'')+'>'+tr(STATUS[k])+'</option>'}).join('')+'</select></td></tr>'}).join('');
+    document.getElementById('appr').innerHTML=pend.length?pend.map(function(l,i){var d=dressById(l.d);return '<div class="ocard">'+dressImg(d,200)+'<div><h3>'+tr(d)+'</h3><div class="meta">'+T('Owner','المالكة')+': '+l.owner+' &middot; '+money(l.price)+' / '+T('day','اليوم')+'</div><div class="meta">'+T('Photos and details complete','الصور والتفاصيل مكتملة')+'</div></div><div class="row"><button class="btn btn-dark sm" data-ap="'+l.d+'">'+T('Approve','موافقة')+'</button><button class="btn btn-danger sm" data-rj="'+l.d+'">'+T('Reject','رفض')+'</button></div></div>'}).join(''):'<div class="empty">'+T('No listings waiting.','لا توجد فساتين بانتظار المراجعة.')+'</div>';
+    document.getElementById('drv').innerHTML=DRIVERS.map(function(x){var n=ORD.filter(function(o){return o.drv===x}).length;return '<tr><td><b>'+x+'</b></td><td>'+n+'</td><td><span class="pill '+(n?'info':'ok')+'">'+(n?T('On jobs','في مهمة'):T('Available','متاح'))+'</span></td></tr>'}).join('');
+    document.getElementById('f1').textContent=money(48200);document.getElementById('f2').textContent=money(7230);document.getElementById('f3').textContent=money(3560);document.getElementById('f4').textContent=money(37410);
+    var months=T('Jun,Jul,Aug,Sep,Oct,Nov','يونيو,يوليو,أغسطس,سبتمبر,أكتوبر,نوفمبر').split(','),sales=[22,28,31,36,42,48],max=48;
+    document.getElementById('bars').innerHTML=months.map(function(m,i){var s=sales[i];return '<div><div class="pair"><i style="height:'+s/max*100+'%"></i><i class="g" style="height:'+s*0.15/max*100+'%"></i></div>'+m+'</div>'}).join('');
+    document.getElementById('log').innerHTML=LOG.map(function(l){return '<div style="padding:.6rem 0;border-bottom:1px solid var(--line)"><b>'+l.no+'</b> <span class="pill '+(l.t==='damage'||l.t==='dispute'?'bad':'warn')+'">'+tr(TYPES[l.t])+'</span><div class="small muted">'+(l.n.en?tr(l.n):l.n)+'</div></div>'}).join('')||'<div class="muted small">'+T('Nothing recorded.','لا شيء مسجل.')+'</div>';
+    document.getElementById('msgs').innerHTML=MSG.map(function(m,i){return '<div class="row sp" style="padding:.7rem 0;border-bottom:1px solid var(--line)"><div><b>'+m.who+'</b><div class="small muted">'+tr(m.m)+'</div></div>'+(m.done?'<span class="pill ok">'+T('Resolved','تم الحل')+'</span>':'<button class="btn btn-ghost sm" data-res="'+i+'">'+T('Mark resolved','تم الحل')+'</button>')+'</div>'}).join('');
+    bind();
+  }
+  function bind(){
+    [].forEach.call(document.querySelectorAll('[data-goto]'),function(b){b.onclick=function(){showTab(b.dataset.goto)}});
+    [].forEach.call(document.querySelectorAll('[data-drv]'),function(s){s.onchange=function(){var o=ORD[s.dataset.drv];o.drv=s.value;if(o.drv&&o.s<2)o.s=2;render();if(o.drv)toast(T('Driver notified of the new assignment.','تم إشعار السائق بالمهمة الجديدة.'))}});
+    [].forEach.call(document.querySelectorAll('[data-st]'),function(s){s.onchange=function(){ORD[s.dataset.st].s=+s.value;render();toast(T('Status updated. The customer was notified.','تم تحديث الحالة. تم إشعار العميلة.'))}});
+    [].forEach.call(document.querySelectorAll('[data-ap],[data-rj]'),function(b){b.onclick=function(){var id=+(b.dataset.ap||b.dataset.rj);LST=LST.filter(function(l){return l.d!==id});render();toast(b.dataset.ap?T('Dress approved and published.','تمت الموافقة ونُشر الفستان.'):T('Dress rejected. The owner is notified.','تم رفض الفستان. سيتم إشعار المالكة.'))}});
+    [].forEach.call(document.querySelectorAll('[data-res]'),function(b){b.onclick=function(){MSG[b.dataset.res].done=true;render()}});
+  }
+  document.getElementById('addi').onclick=function(){var n=document.getElementById('in').value.trim().toUpperCase();if(!n){toast(T('Enter an order number.','أدخلي رقم الطلب.'));return}LOG.unshift({no:n,t:document.getElementById('it').value,n:document.getElementById('nt').value||'-'});document.getElementById('in').value='';document.getElementById('nt').value='';render();toast(T('Issue recorded.','تم تسجيل المشكلة.'))};
+  initTabs();window.onLang=render;render();
+})();
+</script>
+</body>
+</html>
